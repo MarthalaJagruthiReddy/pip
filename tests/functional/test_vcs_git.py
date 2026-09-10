@@ -93,6 +93,25 @@ def test_git_work_tree_ignored(tmpdir: pathlib.Path) -> None:
     Git.run_command(["status", repo_dir], extra_environ=env, cwd=repo_dir)
 
 
+def test_git_index_file_ignored(tmpdir: pathlib.Path) -> None:
+    """
+    Test that a GIT_INDEX_FILE environment variable is ignored.
+    """
+    repo_path = tmpdir / "test-repo"
+    repo_path.mkdir()
+    repo_dir = str(repo_path)
+
+    Git.run_command(["init", repo_dir], cwd=repo_dir)
+    (repo_path / "tracked.txt").write_text("tracked\n")
+    Git.run_command(["add", "tracked.txt"], cwd=repo_dir)
+
+    env = {"GIT_INDEX_FILE": "foo"}
+    output = Git.run_command(
+        ["ls-files"], extra_environ=env, cwd=repo_dir, show_stdout=False
+    )
+    assert output.strip() == "tracked.txt"
+
+
 def test_get_remote_url(script: PipTestEnvironment, tmpdir: pathlib.Path) -> None:
     source_path = tmpdir / "source"
     source_path.mkdir()
