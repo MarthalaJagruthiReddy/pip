@@ -1,0 +1,1 @@
+Ignore ``GIT_INDEX_FILE`` when invoking Git for VCS requirements.
